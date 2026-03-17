@@ -1,23 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import UploadPage from './components/UploadPage';
+import NursesOrderPage from './components/NursesOrderPage';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('monitoring');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {currentPage === 'monitoring' ? (
+        <UploadPage onNavigateToNurses={() => setCurrentPage('nurses')} />
+      ) : (
+        <NursesOrderPage onNavigateBack={() => setCurrentPage('monitoring')} />
+      )}
     </div>
   );
 }
