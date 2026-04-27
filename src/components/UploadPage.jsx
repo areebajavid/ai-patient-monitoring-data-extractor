@@ -52,7 +52,7 @@ function UploadPage({ onNavigateToNurses }) {
     formData.append('image', selectedFile);
 
     try {
-      const response = await axios.post('http://localhost:5000/extract', formData);
+      const response = await axios.post('https://ai-patient-monitoring-data-extractor.onrender.com/extract', formData);
       if (response.data.success) {
         const data = response.data.data;
         setExtractedData(data);
