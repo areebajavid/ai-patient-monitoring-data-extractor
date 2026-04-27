@@ -15,19 +15,27 @@ app.use(express.json());
 
 app.post("/extract", upload.single("image"), async (req, res) => {
   try {
-    // Read the uploaded image and convert to base64
     const imagePath = req.file.path;
     const imageData = fs.readFileSync(imagePath).toString("base64");
     const mimeType = req.file.mimetype;
 
-    // Send to Gemini API
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      "https://api.groq.com/openai/v1/chat/completions",
       {
-        contents: [
+        model: "meta-llama/llama-4-scout-17b-16e-instruct",
+        max_tokens: 4096,
+        messages: [
           {
-            parts: [
+            role: "user",
+            content: [
               {
+                type: "image_url",
+                image_url: {
+                  url: `data:${mimeType};base64,${imageData}`,
+                },
+              },
+              {
+                type: "text",
                 text: `You are a medical data extraction assistant specializing in neonatal care records.
 
 This is an SNCU (Special Newborn Care Unit) monitoring sheet. Extract ALL visible data from the image.
@@ -73,30 +81,25 @@ RULES:
 - Preserve exact values as written (including units)
 - Include ALL readings from left to right across the sheet`,
               },
-              {
-                inline_data: {
-                  mime_type: mimeType,
-                  data: imageData,
-                },
-              },
             ],
           },
         ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
       }
     );
 
     // Clean up uploaded file
     fs.unlinkSync(imagePath);
 
-    // Extract the JSON from Gemini's response
-    // Extract the JSON from Gemini's response
-let geminiText = response.data.candidates[0].content.parts[0].text;
-
-// Remove markdown code blocks if present
-geminiText = geminiText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-
-// Parse the JSON
-const jsonData = JSON.parse(geminiText);
+    // Extract the JSON from Groq's response
+    let groqText = response.data.choices[0].message.content;
+    groqText = groqText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+    const jsonData = JSON.parse(groqText);
 
     res.json({ success: true, data: jsonData });
   } catch (error) {
@@ -104,21 +107,30 @@ const jsonData = JSON.parse(geminiText);
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 app.post("/extract-nurses", upload.single("image"), async (req, res) => {
   try {
-    // Read the uploaded image and convert to base64
     const imagePath = req.file.path;
     const imageData = fs.readFileSync(imagePath).toString("base64");
     const mimeType = req.file.mimetype;
 
-    // Send to Gemini API with Nurses Order Sheet specific prompt
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      "https://api.groq.com/openai/v1/chat/completions",
       {
-        contents: [
+        model: "meta-llama/llama-4-scout-17b-16e-instruct",
+        max_tokens: 4096,
+        messages: [
           {
-            parts: [
+            role: "user",
+            content: [
               {
+                type: "image_url",
+                image_url: {
+                  url: `data:${mimeType};base64,${imageData}`,
+                },
+              },
+              {
+                type: "text",
                 text: `You are a medical data extraction assistant specializing in neonatal care records.
 
 This is a NURSES ORDER SHEET from an SNCU (Special Newborn Care Unit). Extract ALL visible treatment and medication data from the image.
@@ -160,29 +172,25 @@ RULES:
 - Include the total input calculation if visible
 - Return ONLY the JSON object, no markdown formatting, no backticks, no extra text`,
               },
-              {
-                inline_data: {
-                  mime_type: mimeType,
-                  data: imageData,
-                },
-              },
             ],
           },
         ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
       }
     );
 
     // Clean up uploaded file
     fs.unlinkSync(imagePath);
 
-    // Extract the JSON from Gemini's response
-    let geminiText = response.data.candidates[0].content.parts[0].text;
-
-    // Remove markdown code blocks if present
-    geminiText = geminiText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-
-    // Parse the JSON
-    const jsonData = JSON.parse(geminiText);
+    // Extract the JSON from Groq's response
+    let groqText = response.data.choices[0].message.content;
+    groqText = groqText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+    const jsonData = JSON.parse(groqText);
 
     res.json({ success: true, data: jsonData });
   } catch (error) {
@@ -190,6 +198,7 @@ RULES:
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 app.listen(5000, () => {
   console.log("Backend server running on port 5000");
 });
