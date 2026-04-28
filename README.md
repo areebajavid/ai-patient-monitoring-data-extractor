@@ -1,70 +1,122 @@
-# Getting Started with Create React App
+# 🏥 SNCU Monitor — AI Patient Monitoring Data Extractor
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An AI-powered web application that extracts and digitizes handwritten data from **Special Newborn Care Unit (SNCU)** monitoring sheets using computer vision.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Live Demo
 
-### `npm start`
+🔗 **[ai-patient-monitoring-data-extracto.vercel.app](https://ai-patient-monitoring-data-extracto.vercel.app)**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## ✨ Features
 
-### `npm test`
+- 📸 **Upload monitoring sheets** — supports image uploads of handwritten SNCU records
+- 🤖 **AI-powered extraction** — uses Groq's LLaMA vision model to read and parse data
+- 📊 **Structured output** — extracts patient info, vitals, and time-based readings into clean JSON
+- 💊 **Nurses Order Sheet support** — extracts IV fluids, medications, feeds, and treatments
+- 🗃️ **Patient Records** — save and manage extracted patient data
+- ⚡ **Fast & Free** — powered by Groq's free tier API
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🛠️ Tech Stack
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React.js |
+| Backend | Node.js + Express |
+| AI Model | Groq API (LLaMA 4 Scout Vision) |
+| Database | Firebase |
+| Deployment | Vercel (frontend) + Render (backend) |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📋 Data Extracted
 
-### `npm run eject`
+### Monitoring Sheet
+- Patient info (Reg No, Mother's name, weight, DOA)
+- Vitals: HR, RR, Temperature, BP, CRT, SpO2
+- Blood glucose, urine output, stool, abdominal girth
+- O2 flow rate, FIO2, IV patency, RT aspirate
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Nurses Order Sheet
+- Oral feeds (feeding tube, spoon/cup, breastfeed)
+- Oral & IV drugs
+- IV fluids & infusions (rate + volume)
+- Blood products, IV bolus, other treatments
+- 24hr total input
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🏃 Run Locally
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Prerequisites
+- Node.js v18+
+- Groq API key (free at [console.groq.com](https://console.groq.com))
 
-## Learn More
+### Backend
+```bash
+cd backend
+npm install
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Create `.env` file:
+```
+GROQ_API_KEY=your_groq_api_key_here
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+node server.js
+```
 
-### Code Splitting
+### Frontend
+```bash
+npm install
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+App runs at `http://localhost:3000`
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🔐 Environment Variables
 
-### Making a Progressive Web App
+| Variable | Description |
+|----------|-------------|
+| `GROQ_API_KEY` | Groq API key for vision model |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## 📁 Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```
+sncu-monitor/
+├── backend/
+│   ├── server.js        # Express API with /extract & /extract-nurses routes
+│   └── .env             # API keys (not committed)
+├── src/
+│   ├── App.js
+│   ├── UploadPage.jsx   # Monitoring sheet upload & extraction
+│   └── NursesPage.jsx   # Nurses order sheet upload & extraction
+├── public/
+└── package.json
+```
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🌐 Deployment
 
-### `npm run build` fails to minify
+| Service | Platform | URL |
+|---------|----------|-----|
+| Frontend | Vercel | [vercel.app](https://ai-patient-monitoring-data-extracto.vercel.app) |
+| Backend | Render | [onrender.com](https://ai-patient-monitoring-data-extractor.onrender.com) |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+> ⚠️ Render free tier spins down after inactivity — first request may take ~30 seconds.
+
+---
+
+## 📄 License
+
+MIT License © 2026 areebajavid
